@@ -13,8 +13,6 @@ export const AuthProvider = ({ children }) => {
     const storagedToken = sessionStorage.getItem("@App:token");
 
     if (storagedToken && storagedUser) {
-      console.log(storagedToken);
-      console.log(storagedUser, typeof(storagedUser));
       setUser(JSON.parse(storagedUser));
       conditionalTokenApi.defaults.headers.Authorization = `Bearer ${storagedToken}`;
     }
