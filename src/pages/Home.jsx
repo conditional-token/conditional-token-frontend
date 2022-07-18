@@ -1,19 +1,33 @@
-function Home() {
-  return (
-    <div>
-      <header>Conditional Token Home</header>
+import { useMetamask } from "../contexts/metamask";
+import { colors } from "../utils/constants";
 
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-      </div>
+function Home() {
+  const { metamaskAvailable, metamaskConnected, metamaskAccount } =
+    useMetamask();
+
+  return (
+    <div style={styles.container}>
+      {!metamaskAvailable && (
+        <div style={styles.advise}>Metamask is not available</div>
+      )}
     </div>
   );
 }
+
+const styles = {
+  advise: {
+    color: colors.primaryLight,
+    fontSize: 20,
+  },
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    height: "100%",
+    backgroundColor: colors.primaryDark,
+  },
+};
 
 export default Home;
