@@ -13,6 +13,8 @@ export const AuthProvider = ({ children }) => {
     const storagedToken = sessionStorage.getItem("@App:token");
 
     if (storagedToken && storagedUser) {
+      console.log(storagedToken);
+      console.log(storagedUser, typeof(storagedUser));
       setUser(JSON.parse(storagedUser));
       conditionalTokenApi.defaults.headers.Authorization = `Bearer ${storagedToken}`;
     }
@@ -32,7 +34,6 @@ export const AuthProvider = ({ children }) => {
         sessionStorage.setItem("@App:user", JSON.stringify(response.data.user));
         sessionStorage.setItem("@App:token", response.data.token);
         alert("Logged with success!");
-
       } else if (response.status === 401) {
         alert("Invalid email or password!");
       }
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         alert("Invalid email or password!");
       } else {
         alert("Unexpected Error!");
-      };
+      }
     } finally {
       setLoading(false);
     }
@@ -49,11 +50,14 @@ export const AuthProvider = ({ children }) => {
 
   function Logout() {
     setUser(null);
+    sessionStorage.removeItem("@App:user");
+    sessionStorage.removeItem("@App:token");
   }
 
-
   return (
-    <AuthContext.Provider value={{ signed: !!user, loading, user, Login, Logout }}>
+    <AuthContext.Provider
+      value={{ signed: !!user, loading, user, Login, Logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
