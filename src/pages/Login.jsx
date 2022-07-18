@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/auth";
 import { colors } from "../utils/constants";
+import BeatLoader from "react-spinners/BeatLoader";
 
 function LoginScreen() {
-  const { Login } = useAuth();
+  const { Login, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -35,8 +36,9 @@ function LoginScreen() {
         <button
           style={styles.button}
           onClick={() => Login({ email, password })}
+          disabled={loading}
         >
-          Login
+          {loading ? <BeatLoader size={10} color={colors.primaryDark} /> : "Login"}
         </button>
       </div>
     </div>

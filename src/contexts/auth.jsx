@@ -6,6 +6,7 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storagedUser = sessionStorage.getItem("@App:user");
@@ -18,21 +19,41 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   async function Login({ email, password }) {
-    const response = await conditionalTokenApi.post("/auth/login", { email, password });
+    try {
+      setLoading(true);
+      const response = await conditionalTokenApi.post("/auth/login", {
+        email,
+        password,
+      });
+      if (response.status === 200) {
+        setUser(response.data.user);
+        conditionalTokenApi.defaults.headers.Authorization = `Bearer ${response.data.token}`;
 
-    setUser(response.data.user);
-    conditionalTokenApi.defaults.headers.Authorization = `Bearer ${response.data.token}`;
+        sessionStorage.setItem("@App:user", JSON.stringify(response.data.user));
+        sessionStorage.setItem("@App:token", response.data.token);
+        alert("Logged with success!");
 
-    sessionStorage.setItem("@App:user", JSON.stringify(response.data.user));
-    sessionStorage.setItem("@App:token", response.data.token);
+      } else if (response.status === 401) {
+        alert("Invalid email or password!");
+      }
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        alert("Invalid email or password!");
+      } else {
+        alert("Unexpected Error!");
+      };
+    } finally {
+      setLoading(false);
+    }
   }
 
   function Logout() {
     setUser(null);
   }
 
+
   return (
-    <AuthContext.Provider value={{ signed: !!user, user, Login, Logout }}>
+    <AuthContext.Provider value={{ signed: !!user, loading, user, Login, Logout }}>
       {children}
     </AuthContext.Provider>
   );
