@@ -1,3 +1,4 @@
+import MetamaskNotAvailable from "../components/MetamaskNotAvailable";
 import { useMetamask } from "../contexts/metamask";
 import { colors } from "../utils/constants";
 
@@ -8,7 +9,7 @@ function Home() {
   return (
     <div style={styles.container}>
       {!metamaskAvailable && (
-        <div style={styles.advise}>Metamask is not available</div>
+        <MetamaskNotAvailable />
       )}
     </div>
   );

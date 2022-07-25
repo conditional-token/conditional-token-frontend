@@ -1,6 +1,7 @@
-const conditionalTokenApiURL = "http://localhost:8089";
-  // "https://conditional-token-backend.herokuapp.com";
-
+const conditionalTokenApiURL =
+  "https://conditional-token-backend.herokuapp.com";
+const metamaskInstallURL =
+  "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
 
 const colors = {
   white: "#FFFFFF",
@@ -9,4 +10,4 @@ const colors = {
   primaryLight: "#BABBBD",
 };
 
-export { conditionalTokenApiURL, colors };
+export { conditionalTokenApiURL, metamaskInstallURL, colors };
