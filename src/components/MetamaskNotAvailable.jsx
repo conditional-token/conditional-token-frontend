@@ -2,7 +2,7 @@ import MetamaskLogo from "../assets/metamask_logo.png";
 import ChromeLogo from "../assets/google-chrome-logo.png";
 import { colors, metamaskInstallURL } from "../utils/constants";
 
-function MetamaskNotAvailable(props) {
+function MetamaskNotAvailable() {
   return (
     <div style={styles.container}>
       <div style={styles.adviseContainer}>

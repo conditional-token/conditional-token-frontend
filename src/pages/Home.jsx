@@ -1,15 +1,19 @@
 import MetamaskNotAvailable from "../components/MetamaskNotAvailable";
+import SelectAccount from "../components/SelectAccount";
 import { useMetamask } from "../contexts/metamask";
 import { colors } from "../utils/constants";
 
 function Home() {
-  const { metamaskAvailable, metamaskConnected, metamaskAccount } =
-    useMetamask();
+  const { metamaskAvailable } = useMetamask();
 
   return (
     <div style={styles.container}>
-      {!metamaskAvailable && (
+      {!metamaskAvailable ? (
         <MetamaskNotAvailable />
+      ) : (
+        <div>
+          <SelectAccount />
+        </div>
       )}
     </div>
   );
