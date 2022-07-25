@@ -15,7 +15,7 @@ const Routes = () => {
         <Navbar />
         <div style={styles.innerContainer}>
           <Switch>
-            {!signed && <Route exact path="/login" component={Login} />}
+            {!signed && <Route path="*" component={Login} />}
             <Route path="*" component={Home} />
           </Switch>
         </div>
