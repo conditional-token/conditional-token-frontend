@@ -1,5 +1,6 @@
+import Balance from "../components/Balance";
 import MetamaskNotAvailable from "../components/MetamaskNotAvailable";
-import SelectAccount from "../components/SelectAccount";
+import TransactionsList from "../components/TransactionsList";
 import { useMetamask } from "../contexts/metamask";
 import { colors } from "../utils/constants";
 
@@ -11,8 +12,20 @@ function Home() {
       {!metamaskAvailable ? (
         <MetamaskNotAvailable />
       ) : (
-        <div>
-          <SelectAccount />
+        <div style={styles.content}>
+          <div style={styles.column}>
+            <Balance />
+            <TransactionsList />
+          </div>
+          <div style={styles.column}>
+            <Balance />
+            <TransactionsList />
+          </div>
+          <div style={styles.column}>
+            <Balance />
+            <TransactionsList />
+          </div>
+
         </div>
       )}
     </div>
@@ -26,13 +39,23 @@ const styles = {
   },
   container: {
     display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primaryDark,
+  },
+  content: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  column: {
+    display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
-    height: "100%",
-    backgroundColor: colors.primaryDark,
-  },
+    margin: 20,
+  }
 };
 
 export default Home;

@@ -7,6 +7,7 @@ export const MetamaskProvider = ({ children }) => {
   const [metamaskAvailable, setMetamaskAvailable] = useState(null);
   const [availableAccounts, setAvailableAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [balance, setBalance] = useState(null);
 
   const getAccount = async () => {
     try {
@@ -21,7 +22,21 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
+  const getBalance = async (accountId) => {
+    window.ethereum
+    .request({ method: "eth_getBalance", params: [accountId, "latest"] })	
+    .then(async (res) => {
+      const balance = parseInt(res, 16) / 10 ** 18;
+      setBalance(balance);
+    });
+  };
+
   const SetSelectedAccount = async (accountId) => {
+
+    if (!accountId) {
+      return;
+    }
+
     try {
       const accountUpdate = await conditionalTokenApi.post("/account", {
         accountId,
@@ -29,6 +44,7 @@ export const MetamaskProvider = ({ children }) => {
 
       if (accountUpdate.status === 200) {
         setSelectedAccount(accountId);
+        getBalance(accountId);
       }
     } catch (error) {
       alert("Fail to Select Account");
@@ -47,6 +63,7 @@ export const MetamaskProvider = ({ children }) => {
 
             if (accountId && availableAccounts.includes(accountId)) {
               setSelectedAccount(accountId);
+              getBalance(accountId);
             };
           });
 
@@ -63,6 +80,7 @@ export const MetamaskProvider = ({ children }) => {
     <MetamaskContext.Provider
       value={{
         accounts: availableAccounts,
+        balance,
         selectedAccount,
         metamaskAvailable,
         SetSelectedAccount,

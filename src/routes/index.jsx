@@ -1,5 +1,4 @@
 import React from "react";
-import { colors } from "../utils/constants";
 import { useAuth } from "../contexts/auth";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "../pages/Home";
@@ -13,7 +12,7 @@ const Routes = () => {
     <BrowserRouter>
       <div style={styles.container}>
         <Navbar />
-        <div style={styles.innerContainer}>
+        <div style={styles.container}>
           <Switch>
             {!signed && <Route path="*" component={Login} />}
             <Route path="*" component={Home} />
@@ -24,22 +23,12 @@ const Routes = () => {
   );
 };
 
-const styles = {
+const styles ={
   container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
     width: "100%",
     height: "100%",
   },
-  innerContainer: {
-    display: "flex",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
-};
+}
+
 
 export default Routes;
