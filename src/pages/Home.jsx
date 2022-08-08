@@ -1,6 +1,7 @@
 import Balance from "../components/Balance";
 import MetamaskNotAvailable from "../components/MetamaskNotAvailable";
-import TransactionsList from "../components/TransactionsList";
+import ReceivedPayments from "../components/ReceivedPayments";
+import SentPayments from "../components/SentPayments";
 import { useMetamask } from "../contexts/metamask";
 import { colors } from "../utils/constants";
 
@@ -15,17 +16,12 @@ function Home() {
         <div style={styles.content}>
           <div style={styles.column}>
             <Balance />
-            <TransactionsList />
+            <SentPayments />
           </div>
           <div style={styles.column}>
-            <Balance />
-            <TransactionsList />
+            <ReceivedPayments />
           </div>
-          <div style={styles.column}>
-            <Balance />
-            <TransactionsList />
-          </div>
-
+          <div style={styles.column}></div>
         </div>
       )}
     </div>
@@ -55,7 +51,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     margin: 20,
-  }
+  },
 };
 
 export default Home;

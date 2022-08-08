@@ -6,7 +6,7 @@ function Balance() {
   return (
     <div style={styles.container}>
       <span style={styles.title}>Current Balance</span>
-      <span style={styles.balance}>{balance} Tokens</span>
+      <span style={styles.balance}>{balance?.toFixed(2)} Tokens</span>
     </div>
   );
 }
