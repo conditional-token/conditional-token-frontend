@@ -2,7 +2,8 @@ import { weiToEthereum } from "../utils/constants";
 import { colors } from "../utils/constants";
 
 function PaymentItem(props) {
-  const { payment, isIssuer, isValidator } = props;
+  const { payment, isIssuer, isValidator, claimPayment, validatePayment } = props;
+  console.log(payment)
 
   return (
     <div style={styles.itemContainer}>
@@ -27,6 +28,11 @@ function PaymentItem(props) {
         {payment.isValidated.toString()}
       </div>
       <div>
+        <span>Is Finished: </span>
+        {payment.isPaid.toString() }
+       
+      </div>
+      <div>
         <span>Paid: </span>
         {payment.isPaid.toString()}
       </div>
@@ -34,25 +40,41 @@ function PaymentItem(props) {
         <span>Amount: </span>
         {weiToEthereum(parseInt(payment.paymentValue.toString()))}
       </div>
-      {payment.isValidated && !payment.isApproved && <button>Claim</button>}
+      {isIssuer && payment.isValidated && !payment.isApproved && !payment.isPaid && (
+        <button onClick={() => claimPayment(payment.id)}>Claim</button>
+      )}
+      {isValidator && !payment.isValidated && (
+        <button onClick={() => validatePayment(payment.id, true)}>
+          Approve
+        </button>
+      )}
+      {isValidator && !payment.isValidated && (
+        <button onClick={() => validatePayment(payment.id, false)}>
+          Reject
+        </button>
+      )}
     </div>
   );
 }
 
 function PaymentsList(props) {
-  const { payments, isIssuer, isValidator, title } = props;
+  const { payments, isIssuer, isValidator, title, claimPayment, validatePayment } = props;
 
   return (
     <div style={styles.container}>
-      <span style={styles.title}>
-        {title}
-      </span>
+      <span style={styles.title}>{title}</span>
       <div style={styles.content}>
-      {payments.map((payment) => (
-        <PaymentItem payment={payment} isIssuer={isIssuer} isValidator={isValidator} />
-      ))}
+        {payments.map((payment) => (
+          <PaymentItem
+            payment={payment}
+            isIssuer={isIssuer}
+            isValidator={isValidator}
+            key={payment.id.toString()}
+            claimPayment={claimPayment}
+            validatePayment={validatePayment}
+          />
+        ))}
       </div>
-  
     </div>
   );
 }

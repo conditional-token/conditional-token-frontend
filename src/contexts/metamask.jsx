@@ -39,6 +39,66 @@ export const MetamaskProvider = ({ children }) => {
     );
   };
 
+  const claimPayment = async (paymentId) => {
+    const paymentsById = sentPayments.reduce((acc, payment) => {
+      acc[payment.id.toString()] = payment;
+      return acc;
+    }, {});
+
+    if (!paymentsById[paymentId.toString()]) {
+      alert("Payment not found");
+      return;
+    };
+
+    if (paymentsById[paymentId.toString()].isPaid) {
+      alert("Payment already paid");
+      return;
+    };
+
+    if(!paymentsById[paymentId.toString()].isValidated) {
+      alert("Payment not validated yet");
+      return;
+    }
+
+    await contractApi.claimPayment(paymentId);
+
+
+  };
+
+  const ValidatePayment = async (paymentId, approve) => {
+    const paymentsById = toValidatePayments.reduce((acc, payment) => {
+      acc[payment.id.toString()] = payment;
+      return acc;
+    }, {});
+
+    if (!paymentsById[paymentId.toString()]) {
+      alert("This payment is not available to validate");
+      return;
+    }
+
+    if (paymentsById[paymentId.toString()].isValidated) {
+      alert("This payment is already validated");
+      return;
+    }
+
+    const canProcede = window.confirm(
+      `Are you sure you want to ${approve ? "Approve" : "Reject"} this payment?`
+    );
+
+    if (!canProcede) {
+      return;
+    }
+
+    if (approve) {
+      await contractApi.approveEvent(paymentId, ethers.utils.parseEther("1"));
+    } else {
+      await contractApi.rejectEvent(paymentId, ethers.utils.parseEther("1"));
+    };
+
+    getTransactions(selectedAccount);
+    getBalance(selectedAccount);
+  };
+
   const getAccount = async () => {
     try {
       const res = await conditionalTokenApi.get("/account");
@@ -84,11 +144,18 @@ export const MetamaskProvider = ({ children }) => {
       validatorOperationsIndexes.map((index) => contractApi.payments(index))
     );
 
-    const toValidatePayments = validatorPaymentsOperations.filter((operation) => !operation.validated);
+    const toValidatePayments = validatorPaymentsOperations.filter(
+      (operation) => !operation.isValidated
+    );
+
+    const validatedPayments = validatorPaymentsOperations.filter(
+      (operation) => operation.isValidated
+    );
 
     setSentPayments(sentPaymentsOperations);
     setReceivedPayments(receivedPaymentsOperations);
     setToValidatePayments(toValidatePayments);
+    setValidatedPayments(validatedPayments);
   };
 
   const SetSelectedAccount = async (accountId) => {
@@ -142,9 +209,11 @@ export const MetamaskProvider = ({ children }) => {
       value={{
         accounts: availableAccounts,
         balance,
+        claimPayment,
         selectedAccount,
         metamaskAvailable,
         SetSelectedAccount,
+        ValidatePayment,
         sentPayments,
         receivedPayments,
         toValidatePayments,

@@ -2,9 +2,14 @@ import { useMetamask } from "../contexts/metamask";
 import PaymentsList from "./PaymentsList";
 
 function ToValidatePayments() {
-  const { toValidatePayments } = useMetamask();
+  const { toValidatePayments, ValidatePayment } = useMetamask();
 
-  return (<PaymentsList payments={toValidatePayments} title={"To Validate Payments"} isValidator />);
+  return (<PaymentsList 
+    payments={toValidatePayments}
+    title={"To Validate Payments"} 
+    isValidator
+    validatePayment={ValidatePayment} 
+    />);
 }
 
 
