@@ -4,7 +4,7 @@ import PaymentsList from "./PaymentsList";
 function SentPayments() {
   const { sentPayments } = useMetamask();
 
-  return (<PaymentsList payments={sentPayments} isIssuer />);
+  return (<PaymentsList payments={sentPayments} isIssuer title={"Sent Payments"} />);
 }
 
 

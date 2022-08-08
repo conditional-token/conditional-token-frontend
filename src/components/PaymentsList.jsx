@@ -2,19 +2,19 @@ import { weiToEthereum } from "../utils/constants";
 import { colors } from "../utils/constants";
 
 function PaymentItem(props) {
-  const { payment, isIssuer } = props;
+  const { payment, isIssuer, isValidator } = props;
 
   return (
     <div style={styles.itemContainer}>
       <div>
         <span>ID:</span> {payment.id.toString()}
       </div>
-      {!isIssuer && (
+      {(!isIssuer || isValidator) && (
         <div>
           <span>Issuer ID:</span> {payment.issuer}
         </div>
       )}
-      {isIssuer && (
+      {(isIssuer || isValidator) && (
         <div>
           <span>Payble To:</span> {payment.payableTo}
         </div>
@@ -23,12 +23,12 @@ function PaymentItem(props) {
         <span>Approved: </span> {payment.isApproved.toString()}
       </div>
       <div>
-        <span>Paid: </span>
-        {payment.isPaid.toString()}
-      </div>
-      <div>
         <span>Validated: </span>
         {payment.isValidated.toString()}
+      </div>
+      <div>
+        <span>Paid: </span>
+        {payment.isPaid.toString()}
       </div>
       <div>
         <span>Amount: </span>
@@ -40,16 +40,19 @@ function PaymentItem(props) {
 }
 
 function PaymentsList(props) {
-  const { payments, isIssuer } = props;
+  const { payments, isIssuer, isValidator, title } = props;
 
   return (
     <div style={styles.container}>
       <span style={styles.title}>
-        {isIssuer ? "Sent" : "Received"} Payments
+        {title}
       </span>
+      <div style={styles.content}>
       {payments.map((payment) => (
-        <PaymentItem payment={payment} isIssuer={isIssuer} />
+        <PaymentItem payment={payment} isIssuer={isIssuer} isValidator={isValidator} />
       ))}
+      </div>
+  
     </div>
   );
 }
@@ -61,11 +64,20 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: 500,
-    height: 600,
+    width: 400,
+    height: 650,
     backgroundColor: colors.primaryLight,
     borderRadius: 10,
-    marginTop: 20,
+    margin: 10,
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    overflowY: "scroll",
+    marginTop: 10,
+    paddingTop: 10,
   },
   title: {
     fontFamily: "'Roboto', sans-serif",

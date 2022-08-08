@@ -1,15 +1,18 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { addresss, weiToEthereum } from "../utils/constants";
 import contract from "../utils/contract.json";
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 import { conditionalTokenApi } from "../services/api";
 
 const MetamaskContext = createContext({});
 
-
-export const MetamaskProvider =  ({ children }) => {
+export const MetamaskProvider = ({ children }) => {
   const etherProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const contractApi = new ethers.Contract(addresss, contract.abi, etherProvider.getSigner());
+  const contractApi = new ethers.Contract(
+    addresss,
+    contract.abi,
+    etherProvider.getSigner()
+  );
 
   const [metamaskAvailable, setMetamaskAvailable] = useState(null);
   const [availableAccounts, setAvailableAccounts] = useState([]);
@@ -17,7 +20,8 @@ export const MetamaskProvider =  ({ children }) => {
   const [balance, setBalance] = useState(null);
   const [sentPayments, setSentPayments] = useState([]);
   const [receivedPayments, setReceivedPayments] = useState([]);
-
+  const [toValidatePayments, setToValidatePayments] = useState([]);
+  const [validatedPayments, setValidatedPayments] = useState([]);
 
   const createPayment = async (value, fee, payableTo, validators) => {
     const paymentValue = ethers.utils.parseEther(String(value));
@@ -30,12 +34,10 @@ export const MetamaskProvider =  ({ children }) => {
       validators,
       {
         from: selectedAccount,
-        value: ethers.utils.parseEther(String(value + fee))
+        value: ethers.utils.parseEther(String(value + fee)),
       }
     );
-
   };
-
 
   const getAccount = async () => {
     try {
@@ -52,35 +54,44 @@ export const MetamaskProvider =  ({ children }) => {
 
   const getBalance = async (accountId) => {
     window.ethereum
-    .request({ method: "eth_getBalance", params: [accountId, "latest"] })	
-    .then(async (res) => {
-      const balance = weiToEthereum(parseInt(res, 16));
-      setBalance(balance);
-    });
+      .request({ method: "eth_getBalance", params: [accountId, "latest"] })
+      .then(async (res) => {
+        const balance = weiToEthereum(parseInt(res, 16));
+        setBalance(balance);
+      });
   };
-
 
   const getTransactions = async (accountId) => {
     const issuerOperationsIndexes = await contractApi.getIssuerIndex(accountId);
-    const sentPaymentOperationsIndexes = await contractApi.getReceiverIndex(accountId);
-    const validatorOperationsIndexes = await contractApi.getValidatorIndex(accountId);
-
-    const sentPaymentsOperations = await Promise.all(
-      sentPaymentOperationsIndexes.map((index) => contractApi.payments(index))
+    const receivedPaymentOperationsIndexes = await contractApi.getReceiverIndex(
+      accountId
+    );
+    const validatorOperationsIndexes = await contractApi.getValidatorIndex(
+      accountId
     );
 
+    const sentPaymentsOperations = await Promise.all(
+      issuerOperationsIndexes.map((index) => contractApi.payments(index))
+    );
+
+    const receivedPaymentsOperations = await Promise.all(
+      receivedPaymentOperationsIndexes.map((index) =>
+        contractApi.payments(index)
+      )
+    );
+
+    const validatorPaymentsOperations = await Promise.all(
+      validatorOperationsIndexes.map((index) => contractApi.payments(index))
+    );
+
+    const toValidatePayments = validatorPaymentsOperations.filter((operation) => !operation.validated);
+
     setSentPayments(sentPaymentsOperations);
-
-    // const paymentOperations = await contractApi.paymentIndex(accountId);
-    // const validatorOperations = await contractApi.validatorIndex(accountId);
-
-    // console.log(issuerOperations);
-    // console.log(issuerOperations);
-
+    setReceivedPayments(receivedPaymentsOperations);
+    setToValidatePayments(toValidatePayments);
   };
 
   const SetSelectedAccount = async (accountId) => {
-
     if (!accountId) {
       return;
     }
@@ -113,9 +124,8 @@ export const MetamaskProvider =  ({ children }) => {
               setSelectedAccount(accountId);
               getBalance(accountId);
               getTransactions(accountId);
-            // createPayment(1, 0.5, accountId, [accountId]);
-
-            };
+              // createPayment(1, 0.5, accountId, [accountId]);
+            }
           });
 
         setMetamaskAvailable(true);
@@ -137,6 +147,8 @@ export const MetamaskProvider =  ({ children }) => {
         SetSelectedAccount,
         sentPayments,
         receivedPayments,
+        toValidatePayments,
+        validatedPayments,
       }}
     >
       {children}

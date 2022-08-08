@@ -2,6 +2,8 @@ import Balance from "../components/Balance";
 import MetamaskNotAvailable from "../components/MetamaskNotAvailable";
 import ReceivedPayments from "../components/ReceivedPayments";
 import SentPayments from "../components/SentPayments";
+import ToValidatePayments from "../components/ToValidatePayments";
+import ValidatedPayments from "../components/ValidatedPayments";
 import { useMetamask } from "../contexts/metamask";
 import { colors } from "../utils/constants";
 
@@ -13,15 +15,14 @@ function Home() {
       {!metamaskAvailable ? (
         <MetamaskNotAvailable />
       ) : (
-        <div style={styles.content}>
-          <div style={styles.column}>
-            <Balance />
-            <SentPayments />
-          </div>
-          <div style={styles.column}>
-            <ReceivedPayments />
-          </div>
-          <div style={styles.column}></div>
+        <div style={styles.container}>
+          <Balance />
+          <div style={styles.content}>
+          <SentPayments />
+          <ReceivedPayments />
+          <ToValidatePayments />
+          <ValidatedPayments />
+            </div>
         </div>
       )}
     </div>
@@ -35,6 +36,7 @@ const styles = {
   },
   container: {
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primaryDark,
@@ -44,6 +46,7 @@ const styles = {
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 20,
   },
   column: {
     display: "flex",
