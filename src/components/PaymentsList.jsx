@@ -2,8 +2,15 @@ import { weiToEthereum } from "../utils/constants";
 import { colors } from "../utils/constants";
 
 function PaymentItem(props) {
-  const { payment, isIssuer, isValidator, claimPayment, validatePayment } = props;
-  console.log(payment)
+  const {
+    payment,
+    isIssuer,
+    isReceiver,
+    isValidator,
+    claimPayment,
+    refundPayment,
+    validatePayment,
+  } = props;
 
   return (
     <div style={styles.itemContainer}>
@@ -29,8 +36,7 @@ function PaymentItem(props) {
       </div>
       <div>
         <span>Is Finished: </span>
-        {payment.isPaid.toString() }
-       
+        {payment.isPaid.toString()}
       </div>
       <div>
         <span>Paid: </span>
@@ -40,9 +46,18 @@ function PaymentItem(props) {
         <span>Amount: </span>
         {weiToEthereum(parseInt(payment.paymentValue.toString()))}
       </div>
-      {isIssuer && payment.isValidated && !payment.isApproved && !payment.isPaid && (
-        <button onClick={() => claimPayment(payment.id)}>Claim</button>
-      )}
+      {isReceiver &&
+        payment.isValidated &&
+        payment.isApproved &&
+        !payment.isPaid && (
+          <button onClick={() => claimPayment(payment.id)}>Claim</button>
+        )}
+              {isIssuer &&
+        payment.isValidated &&
+        !payment.isApproved &&
+        !payment.isPaid && (
+          <button onClick={() => refundPayment(payment.id)}>Refund</button>
+        )}
       {isValidator && !payment.isValidated && (
         <button onClick={() => validatePayment(payment.id, true)}>
           Approve
@@ -58,7 +73,16 @@ function PaymentItem(props) {
 }
 
 function PaymentsList(props) {
-  const { payments, isIssuer, isValidator, title, claimPayment, validatePayment } = props;
+  const {
+    payments,
+    isIssuer,
+    isReceiver,
+    isValidator,
+    title,
+    claimPayment,
+    validatePayment,
+    refundPayment,
+  } = props;
 
   return (
     <div style={styles.container}>
@@ -69,8 +93,10 @@ function PaymentsList(props) {
             payment={payment}
             isIssuer={isIssuer}
             isValidator={isValidator}
+            isReceiver={isReceiver}
             key={payment.id.toString()}
             claimPayment={claimPayment}
+            refundPayment={refundPayment}
             validatePayment={validatePayment}
           />
         ))}
@@ -93,11 +119,13 @@ const styles = {
     margin: 10,
   },
   content: {
-    display: "flex",
+
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     overflowY: "scroll",
+
+    maxHeight: "100%",	
     marginTop: 10,
     paddingTop: 10,
   },

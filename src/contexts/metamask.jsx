@@ -40,6 +40,32 @@ export const MetamaskProvider = ({ children }) => {
   };
 
   const claimPayment = async (paymentId) => {
+    const paymentsById = receivedPayments.reduce((acc, payment) => {
+      acc[payment.id.toString()] = payment;
+      return acc;
+    }, {});
+
+    if (!paymentsById[paymentId.toString()]) {
+      alert("Payment not found");
+      return;
+    };
+
+    if (paymentsById[paymentId.toString()].isPaid) {
+      alert("Payment already paid");
+      return;
+    };
+
+    if(!paymentsById[paymentId.toString()].isValidated) {
+      alert("Payment not validated yet");
+      return;
+    }
+
+    await contractApi.claimPayment(paymentId);
+
+
+  };
+
+  const refundPayment = async (paymentId) => {
     const paymentsById = sentPayments.reduce((acc, payment) => {
       acc[payment.id.toString()] = payment;
       return acc;
@@ -171,6 +197,7 @@ export const MetamaskProvider = ({ children }) => {
       if (accountUpdate.status === 200) {
         setSelectedAccount(accountId);
         getBalance(accountId);
+        getTransactions(accountId);
       }
     } catch (error) {
       alert("Fail to Select Account");
@@ -210,6 +237,7 @@ export const MetamaskProvider = ({ children }) => {
         accounts: availableAccounts,
         balance,
         claimPayment,
+        refundPayment,
         selectedAccount,
         metamaskAvailable,
         SetSelectedAccount,

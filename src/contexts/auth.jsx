@@ -46,6 +46,35 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  async function Signup({ name, email, password }) {
+    try {
+      setLoading(true);
+      const response = await conditionalTokenApi.post("/auth/signup", {
+        name,
+        email,
+        password,
+      });
+      if (response.status === 201) {
+        setUser(response.data.user);
+        conditionalTokenApi.defaults.headers.Authorization = `Bearer ${response.data.token}`;
+
+        sessionStorage.setItem("@App:user", JSON.stringify(response.data.user));
+        sessionStorage.setItem("@App:token", response.data.token);
+        alert("Logged with success!");
+      } else if (response.status === 409) {
+        alert("Email already used, please use different email!");
+      }
+    } catch (error) {
+      if (error?.response?.status === 409) {
+        alert("Email already used, please use different email!");
+      } else {
+        alert("Unexpected Error!");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function Logout() {
     setUser(null);
     sessionStorage.removeItem("@App:user");
@@ -54,7 +83,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ signed: !!user, loading, user, Login, Logout }}
+      value={{ signed: !!user, loading, user, Login, Signup, Logout }}
     >
       {children}
     </AuthContext.Provider>

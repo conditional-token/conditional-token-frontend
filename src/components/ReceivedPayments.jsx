@@ -2,9 +2,9 @@ import { useMetamask } from "../contexts/metamask";
 import PaymentsList from "./PaymentsList";
 
 function ReceivedPayments() {
-  const { receivedPayments } = useMetamask();
+  const { receivedPayments, claimPayment } = useMetamask();
 
-  return (<PaymentsList payments={receivedPayments} title={"Received Payments"} />);
+  return (<PaymentsList payments={receivedPayments} claimPayment={claimPayment} isReceiver title={"Received Payments"} />);
 }
 
 

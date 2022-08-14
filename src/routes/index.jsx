@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/auth";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 import Navbar from "../components/Navbar";
 
 const Routes = () => {
@@ -14,6 +15,7 @@ const Routes = () => {
         <Navbar />
         <div style={styles.container}>
           <Switch>
+            {!signed && <Route path="/signup" component={Signup} />}
             {!signed && <Route path="*" component={Login} />}
             <Route path="*" component={Home} />
           </Switch>
