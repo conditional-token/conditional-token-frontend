@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/auth";
 import { colors } from "../utils/constants";
-import BeatLoader from "react-spinners/BeatLoader";
 import { validateEmail } from "../utils/utils";
+import { Link } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
 
 function Signup() {
   const { Signup, loading } = useAuth();
@@ -59,6 +60,7 @@ function Signup() {
         >
           {loading ? <BeatLoader size={10} color={colors.primaryDark} /> : "Create"}
         </button>
+        <div style={styles.login}>Already registered? <Link to="/login">Login here</Link></div>
       </div>
     </div>
   );
@@ -73,6 +75,11 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primaryDark,
+  },
+  login: {
+    fontFamily: "'Roboto', sans-serif",
+    color: colors.primaryLight,
+    marginTop: 10,
   },
   form: {
     display: "flex",

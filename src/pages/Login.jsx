@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/auth";
 import { colors } from "../utils/constants";
+import { Link} from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
 function LoginScreen() {
@@ -40,6 +41,7 @@ function LoginScreen() {
         >
           {loading ? <BeatLoader size={10} color={colors.primaryDark} /> : "Login"}
         </button>
+        <div style={styles.createAccount}>Not registered? <Link to="/signup">Create your account</Link></div>
       </div>
     </div>
   );
@@ -54,6 +56,11 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primaryDark,
+  },
+  createAccount: {
+    fontFamily: "'Roboto', sans-serif",
+    color: colors.primaryLight,
+    marginTop: 10,
   },
   form: {
     display: "flex",
