@@ -1,5 +1,6 @@
 import { weiToEthereum } from "../utils/constants";
 import { colors } from "../utils/constants";
+import PaymentModal from "./PaymentsModal";
 
 function PaymentItem(props) {
   const {
@@ -52,7 +53,7 @@ function PaymentItem(props) {
         !payment.isPaid && (
           <button onClick={() => claimPayment(payment.id)}>Claim</button>
         )}
-              {isIssuer &&
+      {isIssuer &&
         payment.isValidated &&
         !payment.isApproved &&
         !payment.isPaid && (
@@ -74,6 +75,7 @@ function PaymentItem(props) {
 
 function PaymentsList(props) {
   const {
+    allowCreation,
     payments,
     isIssuer,
     isReceiver,
@@ -86,7 +88,10 @@ function PaymentsList(props) {
 
   return (
     <div style={styles.container}>
-      <span style={styles.title}>{title}</span>
+      <div style={styles.header}>
+        <span style={styles.title}>{title}</span>
+        {allowCreation && <button style={styles.createButton}>New</button>}
+      </div>
       <div style={styles.content}>
         {payments.map((payment) => (
           <PaymentItem
@@ -101,6 +106,7 @@ function PaymentsList(props) {
           />
         ))}
       </div>
+    <PaymentModal />
     </div>
   );
 }
@@ -118,22 +124,29 @@ const styles = {
     borderRadius: 10,
     margin: 10,
   },
+  createButton: {
+    width: 60,
+    height: 40,
+    borderRadius: 50,
+    border: "none",
+    marginLeft: 20,
+    backgroundColor: colors.secondaryDark,
+    color: colors.primaryLight,
+    fontWeight: "bold",
+  },
   content: {
-
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     overflowY: "scroll",
 
-    maxHeight: "100%",	
+    maxHeight: "100%",
     marginTop: 10,
     paddingTop: 10,
   },
   title: {
     fontFamily: "'Roboto', sans-serif",
     fontSize: 25,
-    marginTop: 20,
-    marginBottom: 10,
   },
   itemContainer: {
     width: "90%",
@@ -142,5 +155,12 @@ const styles = {
     borderRadius: 5,
     padding: 10,
     color: colors.primaryLight,
+  },
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
   },
 };

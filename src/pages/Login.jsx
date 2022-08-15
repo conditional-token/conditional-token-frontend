@@ -12,6 +12,7 @@ function LoginScreen() {
   return (
     <div style={styles.container}>
       <div style={styles.form}>
+      <div style={styles.title}>Login</div>
         <label for="email" style={styles.label}>
           Email
         </label>
@@ -102,6 +103,12 @@ const styles = {
     border: "none",
     borderRadius: 20,
   },
+  title: {
+    fontFamily: "'Roboto', sans-serif",
+    color: colors.primaryLight,
+    fontSize: 26,
+    marginBottom: 5,
+  }
 };
 
 export default LoginScreen;
