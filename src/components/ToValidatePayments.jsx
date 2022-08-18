@@ -1,14 +1,14 @@
-import { useMetamask } from "../contexts/metamask";
+import { useContract } from "../contexts/contract";
 import PaymentsList from "./PaymentsList";
 
 function ToValidatePayments() {
-  const { toValidatePayments, ValidatePayment } = useMetamask();
+  const { toValidatePayments, validatePayment } = useContract();
 
   return (<PaymentsList 
     payments={toValidatePayments}
     title={"To Validate Payments"} 
     isValidator
-    validatePayment={ValidatePayment} 
+    validatePayment={validatePayment} 
     />);
 }
 
