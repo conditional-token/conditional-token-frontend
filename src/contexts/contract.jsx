@@ -8,6 +8,7 @@ const ContractContext = createContext({});
 
 export const ContractProvider = ({ children }) => {
   const { accountId } = useMetamask();
+
   const etherProvider = new ethers.providers.Web3Provider(window.ethereum);
   const contractApi = new ethers.Contract(
     addresss,

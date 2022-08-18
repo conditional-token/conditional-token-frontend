@@ -1,6 +1,5 @@
 import { weiToEthereum } from "../utils/constants";
 import { colors } from "../utils/constants";
-import PaymentModal from "./PaymentsModal";
 
 function PaymentItem(props) {
   const {
@@ -84,13 +83,14 @@ function PaymentsList(props) {
     claimPayment,
     validatePayment,
     refundPayment,
+    handleModal,
   } = props;
 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
         <span style={styles.title}>{title}</span>
-        {allowCreation && <button style={styles.createButton}>New</button>}
+        {allowCreation && <button style={styles.createButton} onClick={handleModal}>New</button>}
       </div>
       <div style={styles.content}>
         {payments.map((payment) => (
@@ -106,7 +106,6 @@ function PaymentsList(props) {
           />
         ))}
       </div>
-    <PaymentModal />
     </div>
   );
 }
