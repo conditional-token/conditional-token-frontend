@@ -69,7 +69,12 @@ export const ContractProvider = ({ children }) => {
       return;
     }
 
-    await contractApi.claimPayment(paymentId);
+    const claim = await contractApi.claimPayment(paymentId);
+
+    return claim.wait().then(() => {
+      getTransactions(accountId);
+      getBalance(accountId);
+    });
   };
 
   const refundPayment = async (paymentId) => {
@@ -77,6 +82,7 @@ export const ContractProvider = ({ children }) => {
       acc[payment.id.toString()] = payment;
       return acc;
     }, {});
+
 
     if (!paymentsById[paymentId.toString()]) {
       alert("Payment not found");
@@ -93,7 +99,12 @@ export const ContractProvider = ({ children }) => {
       return;
     }
 
-    await contractApi.claimPayment(paymentId);
+    const claim = await contractApi.claimPayment(paymentId);
+
+    return claim.wait().then(() => {
+      getTransactions(accountId);
+      getBalance(accountId);
+    });
   };
 
   const validatePayment = async (paymentId, approve) => {
@@ -120,13 +131,24 @@ export const ContractProvider = ({ children }) => {
       return;
     }
 
+    let validation;
+
     if (approve) {
-      await contractApi.approveEvent(paymentId, ethers.utils.parseEther("1"));
+      validation = await contractApi.approveEvent(
+        paymentId,
+        ethers.utils.parseEther("1")
+      );
     } else {
-      await contractApi.rejectEvent(paymentId, ethers.utils.parseEther("1"));
+      validation = await contractApi.rejectEvent(
+        paymentId,
+        ethers.utils.parseEther("1")
+      );
     }
 
-    getTransactions(accountId);
+    return validation.wait().then(() => {
+      getTransactions(accountId);
+      getBalance(accountId);
+    });
   };
 
   const getTransactions = async (accountId) => {

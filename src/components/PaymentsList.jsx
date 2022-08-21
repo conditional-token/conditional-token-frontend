@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { weiToEthereum } from "../utils/constants";
 import { colors } from "../utils/constants";
 import { copyToClipboard } from "../utils/utils";
@@ -8,22 +9,19 @@ import {
   AddCircleOutline,
   Close,
   Check,
-  Send,
-  ScheduleSend,
-  CancelScheduleSend,
-  AttachMoney,
-  MoreHoriz,
   Schedule,
   CurrencyExchange,
   PriceCheck,
   LocalAtmOutlined,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
+import MoonLoader from "react-spinners/MoonLoader";
 
 function ActionButton(props) {
-  const { onClick, accept, claim, refund } = props;
+  const { onClick, accept, claim, refund, loading, waitingAction } = props;
+
   return (
-    <IconButton onClick={onClick}>
+    <IconButton onClick={onClick} disabled={loading || waitingAction}>
       <span
         style={{
           display: "flex",
@@ -37,20 +35,25 @@ function ActionButton(props) {
           minWidth: 120,
         }}
       >
-        {(claim || accept) && (
+        {(claim || accept) && !loading && (
           <PriceCheck style={{ fontSize: 12, marginRight: 5 }} />
         )}
-        {!accept && <Close style={{ fontSize: 12, marginRight: 5 }} />}
-        {claim && (
+        {!accept && !loading && (
+          <Close style={{ fontSize: 12, marginRight: 5 }} />
+        )}
+        {claim && !loading && (
           <span style={{ fontSize: 12 }}>
             Claim {refund ? "Refund" : "Payment"}
           </span>
         )}
-        {accept && !claim && (
+        {accept && !claim && !loading && (
           <span style={{ fontSize: 12 }}>Approve Payment</span>
         )}
-        {!accept && !claim && (
+        {!accept && !claim && !loading && (
           <span style={{ fontSize: 12 }}>Reject Payment</span>
+        )}
+        {loading && (
+          <MoonLoader size={15} color={accept || claim ? "green" : "red"} />
         )}
       </span>
     </IconButton>
@@ -158,6 +161,64 @@ function PaymentItem(props) {
     refundPayment,
     validatePayment,
   } = props;
+  const [loadingButton, setLoadingButton] = useState({});
+
+  const handleLoadingButton = (paymentId, buttonAction, status) => {
+    setLoadingButton({
+      ...loadingButton,
+      [paymentId]: {
+        ...(loadingButton[paymentId] || {}),
+        [buttonAction]: status,
+      },
+    });
+  };
+
+  const handleClaim = async (paymentId) => {
+    handleLoadingButton(paymentId, "claim", true);
+    try {
+      await claimPayment(paymentId);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      handleLoadingButton(paymentId, "claim", false);
+    }
+  };
+
+  const handleRefund = async (paymentId) => {
+    handleLoadingButton(paymentId, "refund", true);
+    try {
+      await refundPayment(paymentId);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      handleLoadingButton(paymentId, "refund", false);
+    }
+  };
+
+  const handleApprove = async (paymentId) => {
+    handleLoadingButton(paymentId, "approve", true);
+    try {
+      await validatePayment(paymentId, true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      handleLoadingButton(paymentId, "approve", false);
+    }
+  };
+
+  const handleReject = async (paymentId) => {
+    handleLoadingButton(paymentId, "reject", true);
+    try {
+      await validatePayment(paymentId, false);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      handleLoadingButton(paymentId, "reject", false);
+    }
+  };
+
+  const isPaymentWaitingAction = (paymentId) =>
+    Object.values(loadingButton[paymentId] || {}).some((status) => status);
 
   return (
     <div style={styles.itemContainer}>
@@ -197,7 +258,7 @@ function PaymentItem(props) {
         </div>
       )}
       <div>
-      <span
+        <span
           style={{
             display: "flex",
             flexDirection: "row",
@@ -215,11 +276,13 @@ function PaymentItem(props) {
             <LocalAtmOutlined style={{ fontSize: 20, marginRight: 10 }} />
           </span>
           <span style={{ fontSize: 20, marginRight: 5 }}>
-            {weiToEthereum(parseInt(payment.paymentValue.toString()))?.toFixed(10)}
+            {weiToEthereum(parseInt(payment.paymentValue.toString()))?.toFixed(
+              10
+            )}
           </span>
           <span>ETH</span>
-        </span> 
-        </div>
+        </span>
+      </div>
 
       <div
         style={{
@@ -244,34 +307,45 @@ function PaymentItem(props) {
             />
           </div>
         )}
-
-
       </div>
       <div>
         {isReceiver &&
           payment.isValidated &&
           payment.isApproved &&
           !payment.isPaid && (
-            <ActionButton onClick={() => claimPayment(payment.id)} claim />
+            <ActionButton
+              onClick={() => handleClaim(payment.id.toString())}
+              claim
+              loading={loadingButton[payment.id]?.claim}
+              waitingAction={isPaymentWaitingAction(payment.id.toString())}
+            />
           )}
         {isIssuer &&
           payment.isValidated &&
           !payment.isApproved &&
           !payment.isPaid && (
             <ActionButton
-              onClick={() => refundPayment(payment.id)}
+              onClick={() => handleRefund(payment.id.toString())}
               claim
               refund
+              loading={loadingButton[payment.id]?.refund}
+              waitingAction={isPaymentWaitingAction(payment.id.toString())}
             />
           )}
         {isValidator && !payment.isValidated && (
           <ActionButton
-            onClick={() => validatePayment(payment.id, true)}
+            onClick={() => handleApprove(payment.id.toString())}
             accept
+            loading={loadingButton[payment.id]?.approve}
+            waitingAction={isPaymentWaitingAction(payment.id.toString())}
           />
         )}
         {isValidator && !payment.isValidated && (
-          <ActionButton onClick={() => validatePayment(payment.id, false)} />
+          <ActionButton
+            onClick={() => handleReject(payment.id.toString())}
+            loading={loadingButton[payment.id]?.reject}
+            waitingAction={isPaymentWaitingAction(payment.id.toString())}
+          />
         )}
       </div>
     </div>
