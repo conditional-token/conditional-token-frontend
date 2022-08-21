@@ -38,7 +38,7 @@ function ActionButton(props) {
         {(claim || accept) && !loading && (
           <PriceCheck style={{ fontSize: 12, marginRight: 5 }} />
         )}
-        {!accept && !loading && (
+        {!accept && !claim && !loading && (
           <Close style={{ fontSize: 12, marginRight: 5 }} />
         )}
         {claim && !loading && (
@@ -363,6 +363,7 @@ function PaymentsList(props) {
     claimPayment,
     validatePayment,
     refundPayment,
+    payed,
     handleModal,
   } = props;
 

@@ -1,19 +1,18 @@
 import { useContract } from "../contexts/contract";
 import PaymentsList from "./PaymentsList";
 
-function ReceivedPayments() {
+function ToReceivePayments() {
   const { receivedPayments, claimPayment } = useContract();
 
-  console.log(receivedPayments);
 
   return (
     <PaymentsList
-      payments={receivedPayments?.filter(payment => payment.isPaid && payment.isApproved)}
+      payments={receivedPayments.filter(payment => !payment.isPaid)}
       claimPayment={claimPayment}
       isReceiver
-      title={"Received Payments"}
+      title={"To Receive Payments"}
     />
   );
 }
 
-export default ReceivedPayments;
+export default ToReceivePayments;

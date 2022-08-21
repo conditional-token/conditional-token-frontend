@@ -2,6 +2,7 @@ import Balance from "../components/Balance";
 import MetamaskNotAvailable from "../components/MetamaskNotAvailable";
 import ReceivedPayments from "../components/ReceivedPayments";
 import SentPayments from "../components/SentPayments";
+import ToReceivePayments from "../components/ToReceivePayments";
 import ToValidatePayments from "../components/ToValidatePayments";
 import ValidatedPayments from "../components/ValidatedPayments";
 import { useMetamask } from "../contexts/metamask";
@@ -18,6 +19,7 @@ function Home() {
         <div style={styles.container}>
           <Balance />
           <SentPayments />
+          <ToReceivePayments />
           <ReceivedPayments />
           <ToValidatePayments />
           <ValidatedPayments />
@@ -36,7 +38,6 @@ const styles = {
   container: {
     display: "flex",
     flexWrap: "wrap",
-    backgroundColor: colors.primaryDark,
     width: "100%",
     height: "100%",
   },
