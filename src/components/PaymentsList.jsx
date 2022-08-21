@@ -196,6 +196,30 @@ function PaymentItem(props) {
           <IdItem id={payment.receiver} />
         </div>
       )}
+      <div>
+      <span
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            marginLeft: "auto",
+            backgroundColor: colors.primaryLight,
+            borderRadius: 5,
+            color: colors.primaryDark,
+            padding: 5,
+            height: 40,
+          }}
+        >
+          <span>
+            <LocalAtmOutlined style={{ fontSize: 20, marginRight: 10 }} />
+          </span>
+          <span style={{ fontSize: 20, marginRight: 5 }}>
+            {weiToEthereum(parseInt(payment.paymentValue.toString()))?.toFixed(10)}
+          </span>
+          <span>ETH</span>
+        </span> 
+        </div>
 
       <div
         style={{
@@ -221,27 +245,7 @@ function PaymentItem(props) {
           </div>
         )}
 
-        <span
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            marginLeft: "auto",
-            backgroundColor: colors.primaryLight,
-            borderRadius: 5,
-            color: colors.primaryDark,
-            padding: 5,
-            height: 40,
-          }}
-        >
-          <span>
-            <LocalAtmOutlined style={{ fontSize: 15 }} />
-          </span>
-          <span style={{ fontSize: 25, marginRight: 5 }}>
-            {weiToEthereum(parseInt(payment.paymentValue.toString()))}
-          </span>
-          <span>ETH</span>
-        </span>
+
       </div>
       <div>
         {isReceiver &&

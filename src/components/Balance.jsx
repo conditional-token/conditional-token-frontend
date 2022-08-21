@@ -23,6 +23,7 @@ function Balance() {
 const styles = {
   balance: {
     display: "flex",
+
     alignItems: "center",
     fontSize: 20,
     marginRight: 20,
@@ -33,7 +34,6 @@ const styles = {
   },
   container: {
     display: "flex",
-    flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "flex-end",
     width: "100%",
