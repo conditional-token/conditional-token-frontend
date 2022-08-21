@@ -13,9 +13,12 @@ export const ContractProvider = ({ children }) => {
   const [toValidatePayments, setToValidatePayments] = useState([]);
   const [validatedPayments, setValidatedPayments] = useState([]);
 
+  const etherProvider =
+    window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
 
-  const etherProvider = window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
-
+  /*
+Retrieve contract details from API (Abi and address)
+  */
   const getContract = async () => {
     try {
       const contractAddressData = await conditionalTokenApi.get(
@@ -28,7 +31,9 @@ export const ContractProvider = ({ children }) => {
       console.log(error);
     }
   };
-
+  /*
+Request contract details from API and create a contract object
+*/
   useEffect(() => {
     if (!window.ethereum) return;
 
@@ -38,15 +43,20 @@ export const ContractProvider = ({ children }) => {
       setContractApi(new Contract(address, abi, etherProvider.getSigner()));
     });
   }, []);
-
+  /* 
+Update Transactions list on account change
+*/
   useEffect(() => {
     if (!window.ethereum) return;
-    
+
     if (accountId && contractApi) {
       getTransactions(accountId);
     }
   }, [accountId, contractApi]);
 
+  /*
+Create Payment on Contract
+  */
   const createPayment = async (value, fee, receiver, validators) => {
     const paymentValue = ethers.utils.parseEther(String(value));
     const paymentFee = ethers.utils.parseEther(String(fee));
@@ -68,6 +78,9 @@ export const ContractProvider = ({ children }) => {
     });
   };
 
+  /* 
+Claim Payment on Contract, if the payment is valid
+  */
   const claimPayment = async (paymentId) => {
     const paymentsById = receivedPayments.reduce((acc, payment) => {
       acc[payment.id.toString()] = payment;
@@ -97,6 +110,9 @@ export const ContractProvider = ({ children }) => {
     });
   };
 
+  /* 
+Refund Payment on Contract, if the payment is not valid
+  */
   const refundPayment = async (paymentId) => {
     const paymentsById = sentPayments.reduce((acc, payment) => {
       acc[payment.id.toString()] = payment;
@@ -126,6 +142,9 @@ export const ContractProvider = ({ children }) => {
     });
   };
 
+  /*
+Accept or Reject Payment on Contract
+  */
   const validatePayment = async (paymentId, approve) => {
     const paymentsById = toValidatePayments.reduce((acc, payment) => {
       acc[payment.id.toString()] = payment;
@@ -169,7 +188,12 @@ export const ContractProvider = ({ children }) => {
       getBalance(accountId);
     });
   };
-
+  /*
+Retrieve Transactions List from Contract according to accountId
+The Contract api, has a method that returns all the transactions index for a given account
+With the transactions Index, we can retrieve the transactions for the account
+The transactions retured are withou Index, but we have the indexes from the previous Retrieve
+*/
   const getTransactions = async (accountId) => {
     const issuerOperationsIndexes = await contractApi.getIssuerIndex(accountId);
     const receivedPaymentOperationsIndexes = await contractApi.getReceiverIndex(

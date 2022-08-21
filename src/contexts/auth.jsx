@@ -8,7 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const { updateAccounts } = useMetamask();
-
+  /*
+Check if has current user in sessionStorage
+*/
   useEffect(() => {
     const storagedUser = sessionStorage.getItem("@App:user");
     const storagedToken = sessionStorage.getItem("@App:token");
@@ -19,6 +21,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  /*
+Dispatch Login Request, if suceed, set user and token in sessionStorage
+  */
   async function Login({ email, password }) {
     try {
       setLoading(true);
@@ -50,7 +55,9 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   }
-
+  /*
+Dispatch Signup Request, if suceed, set user and token in sessionStorage
+*/
   async function Signup({ name, email, password }) {
     try {
       setLoading(true);
@@ -79,7 +86,9 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   }
-
+  /*
+Dispatch Logout, remove stored user token stored
+*/
   function Logout() {
     setUser(null);
     sessionStorage.removeItem("@App:user");

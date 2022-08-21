@@ -10,6 +10,9 @@ export const MetamaskProvider = ({ children }) => {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [balance, setBalance] = useState(null);
 
+  /* 
+  Retrieve the accounts available in the metamask wallet.
+  */
   const getAccount = async () => {
     try {
       const userAccount = await sessionStorage.getItem("@App:user");
@@ -26,6 +29,9 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
+  /*
+  Change network to Ropsten.
+  */
   const switchNetwork = async (network) => {
     if (!window.ethereum) return;
     try {
@@ -38,10 +44,13 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
+  /*
+  Check if current Network is Ropsten. (Ropsten is the network used for the development of the app and Contract is deployed there)
+  */
   const checkNetwork = async () => {
     if (!window.ethereum) return;
     const currentChainId = await window.ethereum.request({
-      method: 'eth_chainId',
+      method: "eth_chainId",
     });
     if (currentChainId !== ropstenParams.chainId) {
       alert("Please switch to the Ropsten Test Network");
@@ -51,6 +60,9 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
+  /*
+  Get the balance of the selected account on Wallet.
+  */
   const getBalance = async (accountId) => {
     window.ethereum
       .request({ method: "eth_getBalance", params: [accountId, "latest"] })
@@ -60,6 +72,9 @@ export const MetamaskProvider = ({ children }) => {
       });
   };
 
+  /*
+  Send to API the selected account to persist it in the DB, and update the local state.
+  */
   const SetSelectedAccount = async (accountId) => {
     if (!accountId) {
       return;
@@ -79,6 +94,11 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
+  /*
+  Retrieve the accounts available in the metamask wallet.
+  Check if WEB3 is available.
+  Retrieve the previous user selected account from the DB.
+  */
   const updateAccounts = async () => {
     if (window.ethereum) {
       try {
@@ -104,10 +124,16 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
+  /*
+  Retrieve accounts on Loading
+  */
   useEffect(() => {
     updateAccounts();
   }, []);
 
+  /*
+Listen to Wallet changes, deal with the new account selected or new network selected.
+  */
   useEffect(() => {
     if (window.ethereum) {
       checkNetwork();
