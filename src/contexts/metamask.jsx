@@ -85,6 +85,7 @@ export const MetamaskProvider = ({ children }) => {
         selectedAccount,
         metamaskAvailable,
         SetSelectedAccount,
+        getBalance,
       }}
     >
       {children}

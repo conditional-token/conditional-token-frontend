@@ -13,7 +13,7 @@ function Balance() {
       <span style={styles.title}>Current Balance</span>
       <span style={styles.balance}>
         <MonetizationOn />
-        {balance?.toFixed(2)}
+        {balance?.toFixed(10)}
          <span style={{ fontSize: 12, marginLeft: 5}}>ETH</span>
         </span>
     </div>

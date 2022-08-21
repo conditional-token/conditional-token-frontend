@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import CurrencyTextField from "@unicef/material-ui-currency-textfield";
+import MoonLoader from "react-spinners/MoonLoader";
 import { useMetamask } from "../contexts/metamask";
 import { Warning } from "@mui/icons-material";
 import { useContract } from "../contexts/contract";
@@ -20,6 +21,7 @@ function PaymentsModal(props) {
   const [receiverAddress, setReceiverAddress] = useState(null);
   const [validatorAddress, setvalidatorAddress] = useState(null);
   const [validators, setValidators] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const validAmount = amount && amount > 0;
   const validFee = fee && fee > 0;
@@ -60,12 +62,20 @@ function PaymentsModal(props) {
       alert("Invalid payment");
       return;
     }
-    await createPayment(
-      parseFloat(amount),
-      parseFloat(fee),
-      receiverAddress,
-      Object.keys(validators)
-    );
+
+    setLoading(true);
+    try {
+      await createPayment(
+        parseFloat(amount),
+        parseFloat(fee),
+        receiverAddress,
+        Object.keys(validators)
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
 
     resetModal();
   };
@@ -79,139 +89,159 @@ function PaymentsModal(props) {
         aria-describedby="modal-modal-description"
       >
         <div style={styles.container}>
-          <div style={styles.content}>
-            <h3 style={styles.title}>Create Payment</h3>
-
-            <TextField
-              id="receiver"
-              error={receiverAddress && !validReceiverAddress}
-              helperText={
-                receiverAddress && !validReceiverAddress
-                  ? "Please insert a valid address"
-                  : ""
-              }
-              label="Receiver Address"
-              value={receiverAddress}
-              onChange={(event) => setReceiverAddress(event.target.value)}
-              variant="outlined"
-              style={styles.input}
-            />
-
-            <CurrencyTextField
-              decimalPlaces={10}
-              error={amount && !validAmount}
-              helperText={
-                amount && !validAmount ? "Please insert a valid amount" : ""
-              }
-              minimumValue={0}
-              label="Amount"
-              variant="outlined"
-              value={amount}
-              currencySymbol="ETH"
-              outputFormat="string"
-              decimalCharacter="."
-              digitGroupSeparator=","
-              onChange={(_, value) => setAmount(value)}
-              style={styles.input}
-            />
-
-            <CurrencyTextField
-              decimalPlaces={10}
-              error={fee && !validFee}
-              helperText={fee && !validFee ? "Please insert a valid fee" : ""}
-              label="Fee"
-              variant="outlined"
-              value={fee}
-              currencySymbol="ETH"
-              outputFormat="string"
-              decimalCharacter="."
-              digitGroupSeparator=","
-              onChange={(_, value) => setFee(value)}
-              style={styles.input}
-            />
-
-            <div style={styles.validatorsContainer}>
-              <h4>Validators</h4>
-
-              <div style={styles.validatorInput}>
-                <TextField
-                  id="fee-address"
-                  error={validatorAddress && !validValidatorAddress}
-                  helperText={
-                    validatorAddress && !validValidatorAddress
-                      ? "Please insert a valid address"
-                      : ""
-                  }
-                  label="Validator Address"
-                  value={validatorAddress}
-                  onChange={(event) => setvalidatorAddress(event.target.value)}
-                  variant="outlined"
-                  style={{ width: "80%" }}
-                />
-                <Button
-                  disabled={!validValidatorAddress}
-                  variant="contained"
-                  style={styles.addValidatorButton}
-                  onClick={() => handleAddValidator(validatorAddress)}
-                >
-                  +
-                </Button>
-              </div>
-              <div style={styles.validatorsList}>
-                {Object.keys(validators).map((validatorId) => (
-                  <Chip
-                    style={{ fontSize: 8, marginLeft: 5 }}
-                    key={validatorId}
-                    label={validatorId}
-                    variant="outlined"
-                    onDelete={() => handleRemoveValidator(validatorId)}
-                  />
-                ))}
-              </div>
+          {loading ? (
+            <div style={styles.loadingContainer}>
+              <MoonLoader color={colors.primaryLight} />
             </div>
+          ) : (
+            <div style={styles.content}>
+              <h3 style={styles.title}>Create Payment</h3>
 
-            <div style={styles.balancesContainer}>
-              <div>
-                <div style={styles.valueCard}>
-                  <span>Payment Value:</span>
-                  <span style={{ fontSize: 25 }}>
-                    {(parseFloat(amount || 0) + parseFloat(fee || 0))?.toFixed(
-                      10
-                    )}{" "}
-                    ETH
-                  </span>
-                  <div style={{ display : "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginTop: 5 }}>
-                    <span style={styles.paymentStatus}>{amount || 0} ETH</span>{" "}
-                    + <span style={styles.paymentStatus}>{fee || 0} ETH</span>
+              <TextField
+                id="receiver"
+                error={receiverAddress && !validReceiverAddress}
+                helperText={
+                  receiverAddress && !validReceiverAddress
+                    ? "Please insert a valid address"
+                    : ""
+                }
+                label="Receiver Address"
+                value={receiverAddress}
+                onChange={(event) => setReceiverAddress(event.target.value)}
+                variant="outlined"
+                style={styles.input}
+              />
+
+              <CurrencyTextField
+                decimalPlaces={5}
+                error={amount && !validAmount}
+                helperText={
+                  amount && !validAmount ? "Please insert a valid amount" : ""
+                }
+                minimumValue={0}
+                label="Amount"
+                variant="outlined"
+                value={amount}
+                currencySymbol="ETH"
+                outputFormat="string"
+                decimalCharacter="."
+                digitGroupSeparator=","
+                onChange={(_, value) => setAmount(value)}
+                style={styles.input}
+              />
+
+              <CurrencyTextField
+                decimalPlaces={5}
+                error={fee && !validFee}
+                helperText={fee && !validFee ? "Please insert a valid fee" : ""}
+                label="Fee"
+                variant="outlined"
+                value={fee}
+                currencySymbol="ETH"
+                outputFormat="string"
+                decimalCharacter="."
+                digitGroupSeparator=","
+                onChange={(_, value) => setFee(value)}
+                style={styles.input}
+              />
+
+              <div style={styles.validatorsContainer}>
+                <h4>Validators</h4>
+
+                <div style={styles.validatorInput}>
+                  <TextField
+                    id="fee-address"
+                    error={validatorAddress && !validValidatorAddress}
+                    helperText={
+                      validatorAddress && !validValidatorAddress
+                        ? "Please insert a valid address"
+                        : ""
+                    }
+                    label="Validator Address"
+                    value={validatorAddress}
+                    onChange={(event) =>
+                      setvalidatorAddress(event.target.value)
+                    }
+                    variant="outlined"
+                    style={{ width: "80%" }}
+                  />
+                  <Button
+                    disabled={!validValidatorAddress}
+                    variant="contained"
+                    style={styles.addValidatorButton}
+                    onClick={() => handleAddValidator(validatorAddress)}
+                  >
+                    +
+                  </Button>
+                </div>
+                <div style={styles.validatorsList}>
+                  {Object.keys(validators).map((validatorId) => (
+                    <Chip
+                      style={{ fontSize: 8, marginLeft: 5 }}
+                      key={validatorId}
+                      label={validatorId}
+                      variant="outlined"
+                      onDelete={() => handleRemoveValidator(validatorId)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div style={styles.balancesContainer}>
+                <div>
+                  <div style={styles.valueCard}>
+                    <span>Payment Value:</span>
+                    <span style={{ fontSize: 25 }}>
+                      {(
+                        parseFloat(amount || 0) + parseFloat(fee || 0)
+                      )?.toFixed(10)}{" "}
+                      ETH
+                    </span>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginTop: 5,
+                      }}
+                    >
+                      <span style={styles.paymentStatus}>
+                        {amount || 0} ETH
+                      </span>{" "}
+                      + <span style={styles.paymentStatus}>{fee || 0} ETH</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style={{ marginLeft: 5 }}>
-                <div style={styles.valueCard}>
-                  <span>Current Balance:</span>
-                  <span style={{ fontSize: 25 }}>
-                    {balance?.toFixed(10)} ETH
-                  </span>
-                  {insufficientBalance && (
-                    <div style={styles.alertBalance}>
-                      <Warning style={{ marginTop: 2 }} />{" "}
-                      <span style={{ fontSize: 14 }}>Insufficient Balance</span>
-                    </div>
-                  )}
+                <div style={{ marginLeft: 5 }}>
+                  <div style={styles.valueCard}>
+                    <span>Current Balance:</span>
+                    <span style={{ fontSize: 25 }}>
+                      {balance?.toFixed(10)} ETH
+                    </span>
+                    {insufficientBalance && (
+                      <div style={styles.alertBalance}>
+                        <Warning style={{ marginTop: 2 }} />{" "}
+                        <span style={{ fontSize: 14 }}>
+                          Insufficient Balance
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <Button
-                disabled={!validPayment}
-                variant="contained"
-                style={styles.payButton}
-                onClick={handlePayment}
-              >
-                Pay
-              </Button>
+                <Button
+                  disabled={!validPayment}
+                  variant="contained"
+                  style={styles.payButton}
+                  onClick={handlePayment}
+                >
+                  Pay
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </Modal>
     </div>
@@ -320,5 +350,12 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
+  },
+  loadingContainer: {
+    display: "flex",
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
 };

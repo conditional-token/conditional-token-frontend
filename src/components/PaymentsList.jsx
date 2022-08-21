@@ -159,8 +159,6 @@ function PaymentItem(props) {
     validatePayment,
   } = props;
 
-  console.log(payment);
-
   return (
     <div style={styles.itemContainer}>
       <div style={styles.id}>

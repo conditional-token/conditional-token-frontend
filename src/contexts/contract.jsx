@@ -7,7 +7,7 @@ import { useMetamask } from "./metamask";
 const ContractContext = createContext({});
 
 export const ContractProvider = ({ children }) => {
-  const { accountId } = useMetamask();
+  const { accountId, getBalance } = useMetamask();
 
   const etherProvider = new ethers.providers.Web3Provider(window.ethereum);
   const contractApi = new ethers.Contract(
@@ -31,20 +31,22 @@ export const ContractProvider = ({ children }) => {
     const paymentValue = ethers.utils.parseEther(String(value));
     const paymentFee = ethers.utils.parseEther(String(fee));
 
-    try {
-      const payment = await contractApi.createPayment(
-        paymentValue,
-        paymentFee,
-        receiver,
-        validators,
-        {
-          from: accountId,
-          value: paymentValue.add(paymentFee),
-        }
-      );
+    const payment = await contractApi.createPayment(
+      paymentValue,
+      paymentFee,
+      receiver,
+      validators,
+      {
+        from: accountId,
+        value: paymentValue.add(paymentFee),
+      }
+    );
 
-      return payment.wait();
-    } catch (error) {}
+    return payment.wait().then(() => {
+      console.log("Payment created");
+      getTransactions(accountId);
+      getBalance(accountId);
+    });
   };
 
   const claimPayment = async (paymentId) => {
