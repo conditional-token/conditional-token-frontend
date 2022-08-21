@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { weiToEthereum } from "../utils/constants";
+import { ropstenParams, weiToEthereum } from "../utils/constants";
 import { conditionalTokenApi } from "../services/api";
 
 const MetamaskContext = createContext({});
@@ -23,6 +23,31 @@ export const MetamaskProvider = ({ children }) => {
       }
     } catch (error) {
       return null;
+    }
+  };
+
+  const switchNetwork = async (network) => {
+    if (!window.ethereum) return;
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ropstenParams.chainId }],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkNetwork = async () => {
+    if (!window.ethereum) return;
+    const currentChainId = await window.ethereum.request({
+      method: 'eth_chainId',
+    });
+    if (currentChainId !== ropstenParams.chainId) {
+      alert("Please switch to the Ropsten Test Network");
+      await switchNetwork();
+    } else {
+      updateAccounts();
     }
   };
 
@@ -54,7 +79,7 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
-  const updateAccounts = async() => {
+  const updateAccounts = async () => {
     if (window.ethereum) {
       try {
         window.ethereum
@@ -77,10 +102,23 @@ export const MetamaskProvider = ({ children }) => {
     } else {
       setMetamaskAvailable(false);
     }
-  }
+  };
 
   useEffect(() => {
     updateAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      checkNetwork();
+      window.ethereum.on("accountsChanged", async (accounts) => {
+        setSelectedAccount(null);
+        updateAccounts();
+      });
+      window.ethereum.on("networkChanged", async (network) => {
+        checkNetwork();
+      });
+    }
   }, []);
 
   return (

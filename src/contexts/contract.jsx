@@ -13,7 +13,8 @@ export const ContractProvider = ({ children }) => {
   const [toValidatePayments, setToValidatePayments] = useState([]);
   const [validatedPayments, setValidatedPayments] = useState([]);
 
-  const etherProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+  const etherProvider = window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
 
   const getContract = async () => {
     try {
@@ -29,6 +30,8 @@ export const ContractProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    if (!window.ethereum) return;
+
     getContract().then(([contractAddressData, contractAbiData]) => {
       const address = contractAddressData.data.address;
       const abi = contractAbiData.data.abi;
@@ -37,6 +40,8 @@ export const ContractProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (!window.ethereum) return;
+    
     if (accountId && contractApi) {
       getTransactions(accountId);
     }
