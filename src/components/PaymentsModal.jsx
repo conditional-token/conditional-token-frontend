@@ -9,10 +9,12 @@ import Chip from "@mui/material/Chip";
 import CurrencyTextField from "@unicef/material-ui-currency-textfield";
 import { useMetamask } from "../contexts/metamask";
 import { Warning } from "@mui/icons-material";
+import { useContract } from "../contexts/contract";
 
 function PaymentsModal(props) {
   const { open, handleClose } = props;
-  const { balance, createPayment } = useMetamask();
+  const { balance } = useMetamask();
+  const { createPayment } = useContract();
   const [amount, setAmount] = useState(0);
   const [fee, setFee] = useState(0);
   const [receiverAddress, setReceiverAddress] = useState(null);
@@ -58,16 +60,14 @@ function PaymentsModal(props) {
       alert("Invalid payment");
       return;
     }
-    const payment = await createPayment(
-      amount,
-      fee,
+    await createPayment(
+      parseFloat(amount),
+      parseFloat(fee),
       receiverAddress,
       Object.keys(validators)
     );
 
     resetModal();
-
-    console.log(payment);
   };
 
   return (
@@ -98,6 +98,7 @@ function PaymentsModal(props) {
             />
 
             <CurrencyTextField
+              decimalPlaces={10}
               error={amount && !validAmount}
               helperText={
                 amount && !validAmount ? "Please insert a valid amount" : ""
@@ -106,7 +107,6 @@ function PaymentsModal(props) {
               label="Amount"
               variant="outlined"
               value={amount}
-              mini
               currencySymbol="ETH"
               outputFormat="string"
               decimalCharacter="."
@@ -116,6 +116,7 @@ function PaymentsModal(props) {
             />
 
             <CurrencyTextField
+              decimalPlaces={10}
               error={fee && !validFee}
               helperText={fee && !validFee ? "Please insert a valid fee" : ""}
               label="Fee"
@@ -174,9 +175,12 @@ function PaymentsModal(props) {
                 <div style={styles.valueCard}>
                   <span>Payment Value:</span>
                   <span style={{ fontSize: 25 }}>
-                    {parseFloat(amount || 0) + parseFloat(fee || 0)} ETH
+                    {(parseFloat(amount || 0) + parseFloat(fee || 0))?.toFixed(
+                      10
+                    )}{" "}
+                    ETH
                   </span>
-                  <div style={{ marginTop: 5 }}>
+                  <div style={{ display : "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginTop: 5 }}>
                     <span style={styles.paymentStatus}>{amount || 0} ETH</span>{" "}
                     + <span style={styles.paymentStatus}>{fee || 0} ETH</span>
                   </div>
@@ -186,7 +190,9 @@ function PaymentsModal(props) {
               <div style={{ marginLeft: 5 }}>
                 <div style={styles.valueCard}>
                   <span>Current Balance:</span>
-                  <span style={{ fontSize: 25 }}>{balance} ETH</span>
+                  <span style={{ fontSize: 25 }}>
+                    {balance?.toFixed(10)} ETH
+                  </span>
                   {insufficientBalance && (
                     <div style={styles.alertBalance}>
                       <Warning style={{ marginTop: 2 }} />{" "}
@@ -277,8 +283,8 @@ const styles = {
     flexDirection: "column",
     justifyContent: "center",
     backgroundColor: colors.primaryDark,
-    height: 100,
-    minWidth: 200,
+    height: 200,
+    minWidth: 240,
     color: colors.primaryLight,
     fontFamily: "Roboto",
     borderRadius: 10,
@@ -312,7 +318,7 @@ const styles = {
     display: "flex",
     flexWrap: "wrap",
     alignItems: "center",
-     justifyContent: "center",
+    justifyContent: "center",
     marginTop: 20,
   },
 };

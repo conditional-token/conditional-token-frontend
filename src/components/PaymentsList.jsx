@@ -139,10 +139,9 @@ function IdItem(props) {
       <div style={styles.idItem}>
         <span style={{ fontSize: 8 }}>{id}</span>
       </div>{" "}
-      <IconButton>
+      <IconButton onClick={() => copyToClipboard(id)}>
         <ContentCopy
           style={{ fontSize: 10, color: colors.primaryLight, marginTop: 5 }}
-          onClick={() => copyToClipboard(id)}
         />
       </IconButton>
     </>
@@ -159,6 +158,8 @@ function PaymentItem(props) {
     refundPayment,
     validatePayment,
   } = props;
+
+  console.log(payment);
 
   return (
     <div style={styles.itemContainer}>
@@ -194,7 +195,7 @@ function PaymentItem(props) {
           </span>
           <span style={{ fontSize: 12 }}>Receiver: </span>
 
-          <IdItem id={payment.payableTo} />
+          <IdItem id={payment.receiver} />
         </div>
       )}
 

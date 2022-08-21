@@ -27,20 +27,24 @@ export const ContractProvider = ({ children }) => {
     }
   }, [accountId]);
 
-  const createPayment = async (value, fee, payableTo, validators) => {
+  const createPayment = async (value, fee, receiver, validators) => {
     const paymentValue = ethers.utils.parseEther(String(value));
     const paymentFee = ethers.utils.parseEther(String(fee));
 
-    await contractApi.createPayment(
-      paymentValue,
-      paymentFee,
-      payableTo,
-      validators,
-      {
-        from: accountId,
-        value: ethers.utils.parseEther(String(value + fee)),
-      }
-    );
+    try {
+      const payment = await contractApi.createPayment(
+        paymentValue,
+        paymentFee,
+        receiver,
+        validators,
+        {
+          from: accountId,
+          value: paymentValue.add(paymentFee),
+        }
+      );
+
+      return payment.wait();
+    } catch (error) {}
   };
 
   const claimPayment = async (paymentId) => {
@@ -133,18 +137,34 @@ export const ContractProvider = ({ children }) => {
       accountId
     );
 
-    const sentPaymentsOperations = await Promise.all(
+    let sentPaymentsOperations = await Promise.all(
       issuerOperationsIndexes.map((index) => contractApi.payments(index))
     );
 
-    const receivedPaymentsOperations = await Promise.all(
+    sentPaymentsOperations = sentPaymentsOperations.map((operation, index) => {
+      return { ...operation, id: issuerOperationsIndexes[index] };
+    });
+
+    let receivedPaymentsOperations = await Promise.all(
       receivedPaymentOperationsIndexes.map((index) =>
         contractApi.payments(index)
       )
     );
 
-    const validatorPaymentsOperations = await Promise.all(
+    receivedPaymentsOperations = receivedPaymentsOperations.map(
+      (operation, index) => {
+        return { ...operation, id: receivedPaymentOperationsIndexes[index] };
+      }
+    );
+
+    let validatorPaymentsOperations = await Promise.all(
       validatorOperationsIndexes.map((index) => contractApi.payments(index))
+    );
+
+    validatorPaymentsOperations = validatorPaymentsOperations.map(
+      (operation, index) => {
+        return { ...operation, id: validatorOperationsIndexes[index] };
+      }
     );
 
     const toValidatePayments = validatorPaymentsOperations.filter(
