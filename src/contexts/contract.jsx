@@ -1,31 +1,46 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { addresss } from "../utils/constants";
-import contract from "../utils/contract.json";
-import { ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import { useMetamask } from "./metamask";
+import { conditionalTokenApi } from "../services/api";
 
 const ContractContext = createContext({});
 
 export const ContractProvider = ({ children }) => {
   const { accountId, getBalance } = useMetamask();
-
-  const etherProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const contractApi = new ethers.Contract(
-    addresss,
-    contract.abi,
-    etherProvider.getSigner()
-  );
-
+  const [contractApi, setContractApi] = useState(null);
   const [sentPayments, setSentPayments] = useState([]);
   const [receivedPayments, setReceivedPayments] = useState([]);
   const [toValidatePayments, setToValidatePayments] = useState([]);
   const [validatedPayments, setValidatedPayments] = useState([]);
 
+  const etherProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+  const getContract = async () => {
+    try {
+      const contractAddressData = await conditionalTokenApi.get(
+        "/contract/address"
+      );
+      const contractAbiData = await conditionalTokenApi.get("/contract/abi");
+
+      return Promise.all([contractAddressData, contractAbiData]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    if (accountId) {
+    getContract().then(([contractAddressData, contractAbiData]) => {
+      const address = contractAddressData.data.address;
+      const abi = contractAbiData.data.abi;
+      setContractApi(new Contract(address, abi, etherProvider.getSigner()));
+    });
+  }, []);
+
+  useEffect(() => {
+    if (accountId && contractApi) {
       getTransactions(accountId);
     }
-  }, [accountId]);
+  }, [accountId, contractApi]);
 
   const createPayment = async (value, fee, receiver, validators) => {
     const paymentValue = ethers.utils.parseEther(String(value));
@@ -82,7 +97,6 @@ export const ContractProvider = ({ children }) => {
       acc[payment.id.toString()] = payment;
       return acc;
     }, {});
-
 
     if (!paymentsById[paymentId.toString()]) {
       alert("Payment not found");

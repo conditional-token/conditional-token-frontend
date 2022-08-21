@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-
+import { useMetamask } from "./metamask";
 import { conditionalTokenApi } from "../services/api";
 
 const AuthContext = createContext({});
@@ -7,6 +7,7 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { updateAccounts } = useMetamask();
 
   useEffect(() => {
     const storagedUser = sessionStorage.getItem("@App:user");
@@ -29,8 +30,12 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
         conditionalTokenApi.defaults.headers.Authorization = `Bearer ${response.data.token}`;
 
-        sessionStorage.setItem("@App:user", JSON.stringify(response.data.user));
-        sessionStorage.setItem("@App:token", response.data.token);
+        await sessionStorage.setItem(
+          "@App:user",
+          JSON.stringify(response.data.user)
+        );
+        await sessionStorage.setItem("@App:token", response.data.token);
+        updateAccounts();
         alert("Logged with success!");
       } else if (response.status === 401) {
         alert("Invalid email or password!");

@@ -12,6 +12,9 @@ export const MetamaskProvider = ({ children }) => {
 
   const getAccount = async () => {
     try {
+      const userAccount = await sessionStorage.getItem("@App:user");
+      if (!userAccount) return;
+
       const res = await conditionalTokenApi.get("/account");
       if (res.status === 200) {
         return res.data.accountId;
@@ -51,7 +54,7 @@ export const MetamaskProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
+  const updateAccounts = async() => {
     if (window.ethereum) {
       try {
         window.ethereum
@@ -74,6 +77,10 @@ export const MetamaskProvider = ({ children }) => {
     } else {
       setMetamaskAvailable(false);
     }
+  }
+
+  useEffect(() => {
+    updateAccounts();
   }, []);
 
   return (
@@ -86,6 +93,7 @@ export const MetamaskProvider = ({ children }) => {
         metamaskAvailable,
         SetSelectedAccount,
         getBalance,
+        updateAccounts,
       }}
     >
       {children}
