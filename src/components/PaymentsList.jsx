@@ -14,17 +14,20 @@ function PaymentItem(props) {
 
   return (
     <div style={styles.itemContainer}>
-      <div>
+      <div
+        style={styles.id}
+      >
         <span>ID:</span> {payment.id.toString()}
       </div>
       {(!isIssuer || isValidator) && (
-        <div>
-          <span>Issuer ID:</span> {payment.issuer}
+        <div style={{ display: "flex", flexDirection: "row"}}>
+          <span>Issuer ID:</span> 
+          <span style={{ fontSize: 12}}>{payment.issuer}</span>
         </div>
       )}
       {(isIssuer || isValidator) && (
         <div>
-          <span>Payble To:</span> {payment.payableTo}
+          <span>Receiver:</span> {payment.payableTo}
         </div>
       )}
       <div>
@@ -90,7 +93,11 @@ function PaymentsList(props) {
     <div style={styles.container}>
       <div style={styles.header}>
         <span style={styles.title}>{title}</span>
-        {allowCreation && <button style={styles.createButton} onClick={handleModal}>New</button>}
+        {allowCreation && (
+          <button style={styles.createButton} onClick={handleModal}>
+            New
+          </button>
+        )}
       </div>
       <div style={styles.content}>
         {payments.map((payment) => (
@@ -162,4 +169,13 @@ const styles = {
     justifyContent: "center",
     marginTop: 10,
   },
+  id: {
+    backgroundColor: colors.primaryLight,
+    color: colors.primaryDark,
+    width: 50,
+    textAlign: "center",
+    borderRadius: 10, 
+    marginLeft: "auto",
+    fontWeight: "700"
+  }
 };

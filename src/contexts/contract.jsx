@@ -164,6 +164,7 @@ export const ContractProvider = ({ children }) => {
   return (
     <ContractContext.Provider
       value={{
+        createPayment,
         claimPayment,
         refundPayment,
         validatePayment,

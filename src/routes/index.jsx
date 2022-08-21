@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Navbar from "../components/Navbar";
+import { colors } from "../utils/constants";
 
 const Routes = () => {
   const { signed } = useAuth();
@@ -13,7 +14,7 @@ const Routes = () => {
     <BrowserRouter>
       <div style={styles.container}>
         <Navbar />
-        <div style={styles.container}>
+        <div style={{ width: "100%", height: "100%"}}>
           <Switch>
             {!signed && <Route path="/signup" component={Signup} />}
             {!signed && <Route path="*" component={Login} />}
@@ -25,11 +26,16 @@ const Routes = () => {
   );
 };
 
-const styles ={
+const styles = {
   container: {
+    display: "flex",
+    flexDirection: "column",
     width: "100%",
+    height: "100%",
+    minHeight: "100vh",
+    minWidth: "100vw",
+    backgroundColor: colors.primaryDark
   },
-}
-
+};
 
 export default Routes;

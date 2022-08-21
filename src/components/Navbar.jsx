@@ -40,7 +40,7 @@ const styles = {
     flexWrap: "wrap",
     alignItems: "center",
     width: "100%",
-    height: 50,
+    minHeight: 100,
     backgroundColor: colors.secondaryDark,
   },
   sessionContainer: {

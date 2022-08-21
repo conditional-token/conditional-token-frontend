@@ -17,13 +17,12 @@ function Home() {
       ) : (
         <div style={styles.container}>
           <Balance />
-          <div style={styles.content}>
           <SentPayments />
           <ReceivedPayments />
           <ToValidatePayments />
           <ValidatedPayments />
             </div>
-        </div>
+
       )}
     </div>
   );
@@ -36,10 +35,9 @@ const styles = {
   },
   container: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    flexWrap: "wrap",
     backgroundColor: colors.primaryDark,
+    width: "100%",
     height: "100%",
   },
   content: {
