@@ -15,10 +15,10 @@ function Navbar(props) {
 
     return (
       <Button
-      variant="outlined"
-      style={styles.sessionButton}
-      onClick={handleAction}
-    >
+        variant="outlined"
+        style={styles.sessionButton}
+        onClick={handleAction}
+      >
         {signed ? "Logout" : "Login"}
       </Button>
     );
@@ -34,10 +34,7 @@ function Navbar(props) {
         {signed && metamaskAvailable && <SelectAccount />}
       </div>
 
-      <div style={styles.sessionButton}>
-      {getSessionButton()}
-      </div>
-
+      <div style={styles.sessionButton}>{getSessionButton()}</div>
     </div>
   );
 }
@@ -67,12 +64,11 @@ const styles = {
     margin: 20,
   },
   sessionButton: {
-
     width: 100,
     height: 30,
-   
     marginRight: 20,
-
+    marginBottom: 20,
+    marginTop: 5,
   },
 };
 

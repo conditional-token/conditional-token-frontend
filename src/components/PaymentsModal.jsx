@@ -2,7 +2,7 @@ import { useState } from "react";
 import { colors } from "../utils/constants";
 import Modal from "@mui/material/Modal";
 import * as React from "react";
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
@@ -285,6 +285,7 @@ const styles = {
   },
   payButton: {
     marginLeft: 100,
+    marginTop: 10,
     width: 50,
     height: 50,
   },
@@ -309,8 +310,9 @@ const styles = {
   },
   balancesContainer: {
     display: "flex",
-    flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
+     justifyContent: "center",
     marginTop: 20,
   },
 };
