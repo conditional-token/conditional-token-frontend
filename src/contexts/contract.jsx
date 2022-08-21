@@ -43,7 +43,6 @@ export const ContractProvider = ({ children }) => {
     );
 
     return payment.wait().then(() => {
-      console.log("Payment created");
       getTransactions(accountId);
       getBalance(accountId);
     });
