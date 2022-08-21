@@ -10,9 +10,9 @@ const metamaskInstallURL =
 
 const colors = {
   white: "#FFFFFF",
-  primaryDark: "#0D1117",
-  secondaryDark: "#161B22",
-  primaryLight: "#BABBBD",
+  primaryDark: "#0A1929",
+  secondaryDark: "#082038",
+  primaryLight: "#007FFF",
 };
 
 const weiToEthereum = (value) => value /  10 ** 18;

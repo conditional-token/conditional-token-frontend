@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useMetamask } from "../contexts/metamask";
 import { colors } from "../utils/constants";
+import IconButton from "@mui/material/IconButton";
+import { Edit, Save } from "@mui/icons-material";	
 
 function SelectAccount() {
   const { accounts, selectedAccount, SetSelectedAccount } = useMetamask();
@@ -52,34 +54,34 @@ function SelectAccount() {
     <div style={styles.container}>
       <span style={styles.title}>Selected Account: </span>
       {listAccounts()}
-
-      <button
+      <IconButton
         style={styles.actionButton}
         onClick={handleAction}
         disabled={canSelect && (!account || account === "No Account Selected")}
       >
-        {canSelect ? "Save" : "Edit"}
-      </button>
+        {canSelect ? < Save /> : <Edit />}
+      </IconButton>
     </div>
   );
 }
 
 const styles = {
+  container: {
+    backgroundColor: colors.primaryDark,
+    padding: 10,
+    borderRadius: 20,
+  },
   actionButton: {
-    cursor: "pointer",
-    width: 50,
+    width: 30,
     height: 25,
-    fontFamily: "'Roboto', sans-serif",
-    fontSize: 13,
-    color: colors.secondaryDark,
-    marginRight: 20,
-    backgroundColor: colors.primaryLight,
-    borderRadius: 10,
+    bordrRadius: 20,
     marginLeft: 5,
+    color: colors.primaryLight,
   },
   title: {
     fontFamily: "'Roboto', sans-serif",
-    color: colors.primaryLight,
+    color: colors.white,
+    fontSize: 12,
   },
 };
 

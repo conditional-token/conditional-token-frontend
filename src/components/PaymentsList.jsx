@@ -126,9 +126,10 @@ const styles = {
     alignItems: "center",
     width: 400,
     height: 650,
-    backgroundColor: colors.primaryLight,
     borderRadius: 10,
     margin: 10,
+    backgroundColor: colors.secondaryDark,
+    border: `solid 1px ${colors.primaryLight}`,	
   },
   createButton: {
     width: 60,
@@ -136,8 +137,8 @@ const styles = {
     borderRadius: 50,
     border: "none",
     marginLeft: 20,
-    backgroundColor: colors.secondaryDark,
-    color: colors.primaryLight,
+    backgroundColor: colors.primaryLight,
+    color: colors.secondaryDark,
     fontWeight: "bold",
   },
   content: {
@@ -157,7 +158,7 @@ const styles = {
   itemContainer: {
     width: "90%",
     margin: 2,
-    backgroundColor: colors.secondaryDark,
+    backgroundColor: colors.primaryDark,
     borderRadius: 5,
     padding: 10,
     color: colors.primaryLight,
