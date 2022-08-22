@@ -1,12 +1,15 @@
+
 # Conditional Token Frontend
 
 
  Production APP is available at https://conditional-token-frontend.herokuapp.com/
 
  ### To use you need first:
-    - Install [Metamask Extension on you Browser](https://metamask.io/)
-    - Enable Tests Networks, and [Select Ropsten Network on your Metamask Account](https://www.springworks.in/blog/how-to-connect-metamask-to-the-ropsten-test-network/)
-    - Optionally, you can add funds to your Account [here](https://faucet.egorfine.com/)
+ 
+
+ - Install [Metamask Extension on you Browser](https://metamask.io/)
+ - Enable Tests Networks on Metamask, and [Select Ropsten Network on your Metamask Account](https://www.springworks.in/blog/how-to-connect-metamask-to-the-ropsten-test-network/)
+  - Optionally, you can add funds to your Account [here](https://faucet.egorfine.com/) to try Create Payments in App
 
 
 Backend is available at: https://github.com/conditional-token/conditional-token-backend
